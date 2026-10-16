@@ -1,0 +1,111 @@
+/* Carousel slides. Colours come from the theme (set as CSS variables by slides.js), sizes from carousel.json "size".
+   Safe zone: 84 px margins; on the cover keep key content out of the outer ~10 % (profile grid crops to 3:4). */
+@font-face { font-family: Anton; src: url(fonts/Anton-Regular.ttf); }
+@font-face { font-family: ISerif; src: url(fonts/InstrumentSerif-Italic.ttf); }
+@font-face { font-family: Inter; font-weight: 400; src: url(fonts/inter-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: Inter; font-weight: 400; src: url(fonts/inter-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: Inter; font-weight: 600; src: url(fonts/inter-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: Inter; font-weight: 600; src: url(fonts/inter-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: Inter; font-weight: 500; src: url(fonts/inter-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: Inter; font-weight: 500; src: url(fonts/inter-latin-ext-500-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: Inter; font-weight: 700; src: url(fonts/inter-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: Inter; font-weight: 700; src: url(fonts/inter-latin-ext-700-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: JBMono; font-weight: 500; src: url(fonts/jetbrains-mono-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: JBMono; font-weight: 500; src: url(fonts/jetbrains-mono-latin-ext-500-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+html, body { margin: 0; padding: 0; background: transparent; }
+* { box-sizing: border-box; }
+:root { --surface: #FFFBF5; --ink-rgb: 30,22,18; --f-mono: JBMono, monospace; }
+.slide { position: relative; overflow: hidden; width: var(--W); height: var(--H); background: var(--cream); color: var(--espresso);
+  font-family: var(--f-body), sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.fill { position: absolute; inset: 0; width: 100%; height: 100%; }
+img.fill { object-fit: cover; }
+.grain { position: absolute; inset: 0; background-image: url(grain.png); background-size: 512px 512px; mix-blend-mode: overlay; opacity: var(--grain); pointer-events: none; z-index: 50; }
+
+/* type */
+.disp { font-family: var(--f-display), sans-serif; text-transform: uppercase; line-height: .96;   /* room for Ę Ś Ł Ż */ letter-spacing: .005em; }
+.disp.lines { white-space: nowrap; }   /* titles with | breaks keep their lines and shrink to fit instead of re-wrapping */
+.disp em, .acc { font-family: var(--f-accent), serif; font-style: normal; text-transform: none; letter-spacing: 0; color: var(--terracotta); }
+.disp em { font-size: 1.12em; line-height: .86; }
+.body { font-size: 40px; line-height: 1.38; font-weight: 400; }
+.body em { font-family: var(--f-accent), serif; font-style: normal; font-size: 1.22em; line-height: 1; color: var(--terracotta); }
+.body strong { font-weight: 600; }
+.body { text-wrap: pretty; }
+.body p { margin: 0 0 .7em; } .body p:last-child { margin-bottom: 0; }
+.label { font-family: var(--f-label), monospace; font-weight: 500; font-size: 23px; letter-spacing: .14em; text-transform: uppercase; }
+
+/* chrome: kicker + counter on top, handle + swipe at the bottom */
+.meta { position: absolute; left: 84px; right: 84px; top: 70px; display: flex; justify-content: space-between; align-items: center; z-index: 40; }
+.foot { position: absolute; left: 84px; right: 84px; bottom: 64px; display: flex; justify-content: space-between; align-items: center; z-index: 40; }
+.on-photo .meta, .on-photo .foot { color: var(--ink_on_photo); text-shadow: 0 1px 12px rgba(var(--ink-rgb),.35); }
+.swipe::after { content: '  →'; }
+
+/* cover: full photo, big title BEHIND her (cutout on top) */
+.L-cover .shade-top { background: linear-gradient(to bottom, rgba(var(--ink-rgb),.62), rgba(var(--ink-rgb),.18) 38%, rgba(var(--ink-rgb),0) 58%); }
+.L-cover .shade-bot { background: linear-gradient(to top, rgba(var(--ink-rgb),.66), rgba(var(--ink-rgb),0) 34%); }
+.L-cover .title { position: absolute; left: 60px; right: 60px; top: 140px; text-align: center; color: var(--ink_on_photo); z-index: 10; }
+.L-cover .title em { color: var(--terracotta2); }
+.L-cover .title, .L-photo .cap .title { text-shadow: 0 2px 28px rgba(var(--ink-rgb),.35); }
+.L-cover .shade-top { z-index: 5; }
+.L-cover .cut { z-index: 20; }
+.L-cover .shade-bot { z-index: 25; }   /* over the cut-out too, so the bottom is shaded evenly */
+.L-cover img.strip { position: absolute; left: 0; width: 100%; object-fit: fill; }
+.L-cover .sub { position: absolute; left: 84px; right: 84px; bottom: 140px; text-align: center; color: var(--ink_on_photo); z-index: 30; font-size: 38px; text-wrap: balance; text-shadow: 0 1px 14px rgba(var(--ink-rgb),.4); }
+
+/* cover-sticker: cream page, her as a sticker, terracotta sun behind */
+.L-cover-sticker .sun { position: absolute; width: 780px; height: 780px; border-radius: 50%; right: -150px; bottom: 120px; background: var(--terracotta); opacity: .92; }
+.L-cover-sticker .title { position: absolute; left: 84px; right: 84px; top: 150px; z-index: 10; }
+.L-cover-sticker .sub { position: absolute; left: 84px; width: 350px; top: 640px; z-index: 30; color: var(--espresso2); }
+.L-cover-sticker .swipe { background: var(--cream); padding: 10px 18px 9px; border-radius: 40px; margin-right: -18px; }   /* readable over the sticker */
+.L-cover-sticker .stk { position: absolute; right: 10px; bottom: -40px; z-index: 20; transform: rotate(-2.5deg); transform-origin: 50% 100%; }
+
+/* photo: full photo + caption block at the bottom */
+.L-photo .shade-bot { background: linear-gradient(to top, rgba(var(--ink-rgb),.82), rgba(var(--ink-rgb),.5) 30%, rgba(var(--ink-rgb),0) 58%); }
+.L-photo .shade-top { background: linear-gradient(to bottom, rgba(var(--ink-rgb),.38), rgba(var(--ink-rgb),0) 22%); }
+.L-photo .cap { position: absolute; left: 84px; right: 84px; bottom: 150px; color: var(--ink_on_photo); z-index: 30; }
+.L-photo .cap .title { margin-bottom: 22px; } .L-photo .cap .title em { color: var(--terracotta2); }
+.L-photo .cap .body { font-size: 36px; }
+
+/* split: photo on top, text underneath */
+.L-split .ph-box { position: absolute; left: 0; top: 0; width: 100%; overflow: hidden; }
+.L-split .meta { color: var(--ink_on_photo); text-shadow: 0 1px 12px rgba(var(--ink-rgb),.45); }   /* sits on the photo */
+.L-split .txt { position: absolute; left: 84px; right: 84px; bottom: 150px; }
+.L-split .rule { width: 96px; height: 6px; background: var(--terracotta); margin-bottom: 30px; }
+.L-split .title { margin-bottom: 24px; }
+.L-split .body { font-size: 36px; color: var(--espresso2); }
+
+/* text */
+.L-text .num { position: absolute; right: 64px; bottom: 96px; font-family: var(--f-display); font-size: 420px; line-height: .8; color: var(--cream2); z-index: 1; }
+.L-text .txt { position: absolute; left: 84px; right: 84px; top: 180px; bottom: 180px; z-index: 5; display: flex; flex-direction: column; justify-content: center; }
+.L-text .title { margin-bottom: 40px; }
+.L-text .body { color: var(--espresso2); }
+.L-text .stk { position: absolute; right: -20px; bottom: -10px; z-index: 4; }
+
+/* list */
+.L-list .txt { position: absolute; left: 84px; right: 84px; top: 170px; bottom: 170px; display: flex; flex-direction: column; justify-content: center; }
+.L-list .title { margin-bottom: 44px; }
+.L-list .item { display: flex; gap: 30px; align-items: baseline; padding: 26px 0; border-top: 2px solid rgba(var(--ink-rgb),.14); }
+.L-list .item .n { font-family: var(--f-label); font-weight: 500; font-size: 30px; color: var(--terracotta); flex: none; width: 56px; }
+.L-list .item .t { font-size: 38px; line-height: 1.32; color: var(--espresso2); }
+
+/* quote: espresso page */
+.L-quote { background: var(--espresso); color: var(--cream); }
+.L-quote .meta, .L-quote .foot { color: var(--cream2); }
+.L-quote .mark { position: absolute; left: 70px; top: 150px; font-family: var(--f-accent); font-size: 360px; line-height: 1; color: var(--terracotta); }
+.L-quote .q { position: absolute; left: 84px; right: 84px; top: 400px; bottom: 250px; display: flex; align-items: center; }
+.L-quote .qi { width: 100%; font-family: var(--f-accent); font-size: 92px; line-height: 1.05; color: var(--cream); }
+.L-quote .qi em { color: var(--terracotta2); font-style: normal; }
+.L-quote .by { position: absolute; left: 84px; right: 84px; bottom: 170px; color: var(--terracotta2); }
+
+/* cta: terracotta page */
+.L-cta { background: var(--terracotta); color: var(--cream); }
+.L-cta .meta, .L-cta .foot { color: var(--cream); }
+.L-cta .title { position: absolute; left: 84px; right: 84px; top: 190px; color: var(--cream); }
+.L-cta .title em { color: var(--espresso); }
+.L-cta .acts { position: absolute; left: 84px; right: 84px; top: 720px; display: grid; gap: 22px; }
+.L-cta .act { display: flex; align-items: center; gap: 26px; font-size: 40px; font-weight: 600; color: var(--espresso); }
+.L-cta .act i { width: 76px; height: 76px; border-radius: 50%; background: var(--cream); display: grid; place-items: center; flex: none; }
+.L-cta .act svg { width: 38px; height: 38px; }
+.L-cta .stk { position: absolute; right: -10px; bottom: 0; z-index: 4; }
+.L-cta .body { position: absolute; left: 84px; width: 560px; top: 1030px; font-size: 34px; color: var(--cream); }

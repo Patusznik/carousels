@@ -1,0 +1,16 @@
+STEP 4 · ASSETS (optional)
+
+Things you want on the slides exactly as they are:
+logos, icons, app screenshots, stickers, arrows, your signature, a product shot.
+
+Best formats:
+- PNG with a transparent background, at least 1000 px wide
+- JPG or PNG on a plain white background: the white gets cut out for you
+- SVG works too: Claude converts it to a PNG first
+
+Extras you can ask for: a white sticker outline, or a big red X to cross something out.
+
+Name files so they're easy to ask for: logo.svg, app-icon.png, arrow-hand-drawn.svg
+Claude places them as they are. It won't redraw, recolor or invent them.
+
+Only assets you have the right to use.
