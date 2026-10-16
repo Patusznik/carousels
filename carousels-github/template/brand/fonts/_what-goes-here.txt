@@ -1,5 +1,0 @@
-FONTS (optional)
-
-Font files you own a license for (.otf, .ttf, .woff2). They stay on your computer.
-Fonts already installed on your computer don't need to be here: just tell Claude their name.
-Free Google Fonts: Claude downloads them for you, with their license file.
