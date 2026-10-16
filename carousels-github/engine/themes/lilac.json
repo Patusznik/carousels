@@ -1,0 +1,176 @@
+{
+ "name": "lilac",
+ "about": "Light purple macOS-mockup look by @codecoffeechaos: lavender desktop, ink text, lilac accent; Didot titles + Futura UI on a Mac (free GFS Didot / Jost stand-ins elsewhere)",
+ "colors": {
+  "cream": "#F6F2FC",
+  "cream2": "#E6DCF6",
+  "paper": "#F1ECF9",
+  "espresso": "#221B30",
+  "espresso2": "#51476A",
+  "terracotta": "#8B6AD6",
+  "terracotta2": "#CDB8F4",
+  "plum": "#EDB3D3",
+  "ink_on_photo": "#FBF9FF",
+  "surface": "#FDFBFF",
+  "on_accent": "#FFFFFF",
+  "sticky": "#EFE6FF",
+  "ok": "#B9E3C6"
+ },
+ "fonts": {
+  "display": "CDidot, Playfair",
+  "accent": "CDidotI, CDidot, Playfair",
+  "body": "CFutura",
+  "label": "CFutura",
+  "mono": "JBMono"
+ },
+ "font_faces": [
+  {
+   "family": "CDidot",
+   "local": [
+    "Didot",
+    "Didot-Regular"
+   ],
+   "file": "gfs-didot-latin-400-normal.woff2",
+   "weight": 400
+  },
+  {
+   "family": "CDidotI",
+   "local": [
+    "Didot Italic",
+    "Didot-Italic"
+   ],
+   "weight": 400
+  },
+  {
+   "family": "CDidot",
+   "local": [
+    "Didot Bold",
+    "Didot-Bold"
+   ],
+   "file": "playfair-display-latin-700-normal.woff2",
+   "weight": 700
+  },
+  {
+   "family": "Playfair",
+   "file": "playfair-display-latin-400-normal.woff2",
+   "weight": 400,
+   "range": "latin"
+  },
+  {
+   "family": "Playfair",
+   "file": "playfair-display-latin-ext-400-normal.woff2",
+   "weight": 400,
+   "range": "latin-ext"
+  },
+  {
+   "family": "CFutura",
+   "local": [
+    "Futura Medium",
+    "Futura-Medium"
+   ],
+   "file": "jost-latin-500-normal.woff2",
+   "weight": 400,
+   "range": "latin"
+  },
+  {
+   "family": "CFutura",
+   "local": [
+    "Futura Medium",
+    "Futura-Medium"
+   ],
+   "file": "jost-latin-ext-500-normal.woff2",
+   "weight": 400,
+   "range": "latin-ext"
+  },
+  {
+   "family": "CFutura",
+   "local": [
+    "Futura Medium",
+    "Futura-Medium"
+   ],
+   "file": "jost-latin-500-normal.woff2",
+   "weight": 500,
+   "range": "latin"
+  },
+  {
+   "family": "CFutura",
+   "local": [
+    "Futura Medium",
+    "Futura-Medium"
+   ],
+   "file": "jost-latin-ext-500-normal.woff2",
+   "weight": 500,
+   "range": "latin-ext"
+  },
+  {
+   "family": "CFutura",
+   "local": [
+    "Futura Bold",
+    "Futura-Bold"
+   ],
+   "file": "jost-latin-600-normal.woff2",
+   "weight": 600,
+   "range": "latin"
+  },
+  {
+   "family": "CFutura",
+   "local": [
+    "Futura Bold",
+    "Futura-Bold"
+   ],
+   "file": "jost-latin-ext-600-normal.woff2",
+   "weight": 600,
+   "range": "latin-ext"
+  },
+  {
+   "family": "CFutura",
+   "local": [
+    "Futura Bold",
+    "Futura-Bold"
+   ],
+   "file": "jost-latin-700-normal.woff2",
+   "weight": 700,
+   "range": "latin"
+  },
+  {
+   "family": "CFutura",
+   "local": [
+    "Futura Bold",
+    "Futura-Bold"
+   ],
+   "file": "jost-latin-ext-700-normal.woff2",
+   "weight": 700,
+   "range": "latin-ext"
+  }
+ ],
+ "grain": 0.08,
+ "grade": {
+  "wb": [
+   0.995,
+   1.0,
+   1.035
+  ],
+  "contrast": 1.05,
+  "fade": [
+   0.045,
+   0.975
+  ],
+  "saturation": 0.9,
+  "shadow_tint": [
+   0.012,
+   -0.006,
+   0.03
+  ],
+  "highlight_tint": [
+   0.012,
+   0.0,
+   0.014
+  ],
+  "vignette": 0.1
+ },
+ "auto": {
+  "cover": "os",
+  "middle": "os",
+  "cta": "os"
+ }
+}
