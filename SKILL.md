@@ -18,6 +18,10 @@ C=~/Carousels                         # the user's main folder: one subfolder pe
 Run every engine script as `"$PY" $E/<script>.py …`. If `$PY` doesn't exist, the skill isn't installed: give the user
 the install command from section 1.
 
+**Custom or test installs:** if `$E/paths.json` exists, it wins: `home` replaces `~/.carousels` (so
+`PY=<home>/venv/bin/python`) and `work` replaces `~/Carousels` (so `C=<work>`). A test install made with
+`CAROUSELS_SANDBOX` keeps the skill in `<sandbox>/.claude/skills/carousels`, so `S` is the folder this SKILL.md is in.
+
 ### Mac or Windows
 
 Commands in this file are written for the Mac. On Windows, translate them:
@@ -62,8 +66,8 @@ Follow `references/kickoff-brief.md` step by step. In short:
 
 1. Setup check (`bash $S/install.sh --doctor` on a Mac, `install.ps1 -Doctor` on Windows → READY, or exactly
    what's missing). Not installed or broken → the user runs the installer again in Terminal / PowerShell:
-   Mac `curl -fsSL https://cyberspell.tech/carousel-skill/install.sh | bash`,
-   Windows `irm https://cyberspell.tech/carousel-skill/install.ps1 | iex`.
+   Mac `curl -fsSL https://carousels.cyberspell.tech/install.sh | bash`,
+   Windows `irm https://carousels.cyberspell.tech/install.ps1 | iex`.
 2. Existing carousels? (`ls $C`) → continue one, or start a new one.
 3. **Brief, part A (the message):** topic, reader, one CTA, hook, where the text comes from, structure recipe.
 4. Create `$C/<Hook>/` from `$S/template/carousel/`, open it in Finder or File Explorer, tell the user what goes in each folder.

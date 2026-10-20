@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Carousels: a free Claude Code skill that turns your photos into Instagram carousels.
-# By @codecoffeechaos · https://cyberspell.tech/carousel-skill · GPL-3.0
+# By @codecoffeechaos · https://carousels.cyberspell.tech · GPL-3.0
 #
-# Install or update (Mac):   curl -fsSL https://cyberspell.tech/carousel-skill/install.sh | bash
+# Install or update (Mac):   curl -fsSL https://carousels.cyberspell.tech/install.sh | bash
 # Check:                     bash ~/.claude/skills/carousels/install.sh --doctor
 # Uninstall:                 bash ~/.claude/skills/carousels/install.sh --uninstall
 #
@@ -11,13 +11,24 @@
 #
 # What it touches: ~/.claude/skills/carousels (the skill) and ~/.carousels (Python, models, browser).
 # Your work in ~/Carousels is never touched.
+# Test it in one folder, nothing installed outside it:
+#   curl -fsSL https://carousels.cyberspell.tech/install.sh | CAROUSELS_SANDBOX=~/carousels-test bash
+#   then: cd ~/carousels-test && claude   (the skill only exists there)   remove: rm -rf ~/carousels-test
 # Stats: at the end it sends one anonymous count (installed, or the step that failed, plus OS) to Umami.
 # No personal data. Skip it with CAROUSELS_NO_STATS=1.
 set -euo pipefail
 
-BASE="${CAROUSELS_BASE_URL:-https://cyberspell.tech/carousel-skill}"
+BASE="${CAROUSELS_BASE_URL:-https://carousels.cyberspell.tech}"
 CH="${CAROUSELS_HOME:-$HOME/.carousels}"
 SKILL="${CAROUSELS_SKILL_DIR:-$HOME/.claude/skills/carousels}"
+WORK="${CAROUSELS_WORK:-$HOME/Carousels}"
+SB=""
+if [ -n "${CAROUSELS_SANDBOX:-}" ]; then          # everything inside one folder: skill, tools, models, uv, work
+  SB="$(mkdir -p "$CAROUSELS_SANDBOX" && cd "$CAROUSELS_SANDBOX" && pwd)"
+  CH="$SB/.carousels"; SKILL="$SB/.claude/skills/carousels"; WORK="$SB/Carousels"
+  export UV_CACHE_DIR="$SB/.uv/cache" UV_PYTHON_INSTALL_DIR="$SB/.uv/python" UV_INSTALL_DIR="$SB/.uv/bin" \
+         UV_NO_MODIFY_PATH=1 CAROUSELS_NO_STATS=1
+fi
 PY="$CH/venv/bin/python"
 UMAMI_ID="18fcec8a-1398-4b38-9913-e45ec41863b8"                      # Umami website ID for the anonymous install count; empty = off
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]:-/nonexistent}")" 2>/dev/null && pwd || true)"
@@ -35,7 +46,7 @@ stat() {
   [ -n "$UMAMI_ID" ] && [ -z "${CAROUSELS_NO_STATS:-}" ] || return 0
   curl -s -m 4 -o /dev/null -X POST https://gateway.umami.is/api/send \
     -H 'Content-Type: application/json' -H 'User-Agent: Mozilla/5.0 (Macintosh; carousels-installer)' \
-    -d "{\"type\":\"event\",\"payload\":{\"website\":\"$UMAMI_ID\",\"hostname\":\"cyberspell.tech\",\"url\":\"/carousel-skill/install\",\"name\":\"$1\",\"data\":{\"os\":\"$(uname -s | tr A-Z a-z)\",\"arch\":\"$(uname -m)\",\"mode\":\"$MODE\",\"step\":\"$STEP\"}}}" || true
+    -d "{\"type\":\"event\",\"payload\":{\"website\":\"$UMAMI_ID\",\"hostname\":\"carousels.cyberspell.tech\",\"url\":\"/install\",\"name\":\"$1\",\"data\":{\"os\":\"$(uname -s | tr A-Z a-z)\",\"arch\":\"$(uname -m)\",\"mode\":\"$MODE\",\"step\":\"$STEP\"}}}" || true
 }
 say()  { printf '\033[1;35m▸\033[0m %s\n' "$*"; }
 ok()   { printf '  \033[32m✓\033[0m %s\n' "$*"; }
@@ -56,7 +67,7 @@ case "${1:-}" in
 esac
 
 echo
-say "Installing Carousels (a few minutes; about 1.5 GB on first install)"
+say "Installing Carousels (a few minutes; about 2 GB on a Mac with Chrome, 3 GB without)"
 
 # 1. platform
 STEP=platform
@@ -73,9 +84,10 @@ command -v claude >/dev/null 2>&1 || [ -d "$HOME/.claude" ] || \
 
 STEP=uv
 # 2. uv (Python manager by Astral, installs Python without touching your system)
+UVBIN="${UV_INSTALL_DIR:-$HOME/.local/bin}"
 if ! command -v uv >/dev/null 2>&1; then
-  [ -x "$HOME/.local/bin/uv" ] || { say "Getting uv"; curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null; }
-  export PATH="$HOME/.local/bin:$PATH"
+  [ -x "$UVBIN/uv" ] || { say "Getting uv"; curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null; }
+  export PATH="$UVBIN:$PATH"
 fi
 command -v uv >/dev/null 2>&1 || fail "Could not install uv. Check your internet connection and run the command again."
 ok "uv $(uv --version | awk '{print $2}')"
@@ -173,8 +185,10 @@ fi
 ok "MediaPipe pose model"
 
 # 8. your work folder
-mkdir -p "$HOME/Carousels"
-ok "your carousels will live in ~/Carousels"
+mkdir -p "$WORK"
+"$PY" -c "import json,sys; json.dump({'home': sys.argv[1], 'work': sys.argv[2]}, open(sys.argv[3], 'w'), indent=1)" \
+  "$CH" "$WORK" "$SKILL/engine/paths.json"
+ok "your carousels will live in $WORK"
 
 # 9. check
 STEP=doctor
@@ -182,6 +196,11 @@ echo
 "$PY" "$SKILL/engine/doctor.py" || fail "Something is still missing (see above). Run the command again; if it keeps failing, DM @codecoffeechaos a screenshot."
 STEP=done; stat install_ready
 echo
-printf '\033[1;35mDone.\033[0m Next: type  \033[1mcd ~/Carousels\033[0m  then  \033[1mclaude\033[0m  and in Claude type  \033[1m/carousels\033[0m\n'
+printf '\033[1;35mDone.\033[0m Next: type  \033[1mcd %s\033[0m  then  \033[1mclaude\033[0m  and in Claude type  \033[1m/carousels\033[0m\n' "${SB:-$WORK}"
 printf '(Or open the Code tab in the Claude app and choose the Carousels folder. Restart Claude Code if it was open.)\n'
+if [ -n "$SB" ]; then
+  printf '\nTest install: everything is inside %s\n' "$SB"
+  printf 'Try it:  cd %s && claude   then type /carousels (the skill only exists in this folder)\n' "$SB"
+  printf 'Remove:  rm -rf %s\n' "$SB"
+fi
 printf 'Posting your carousel? Tag @codecoffeechaos so I can see it.\n\n'

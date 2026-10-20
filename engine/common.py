@@ -8,9 +8,18 @@ and ~/.carousels/models (RobustVideoMatting code + weights, MediaPipe pose model
 import json, os, platform, shutil, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-HOME = os.environ.get('CAROUSELS_HOME') or os.path.join(os.path.expanduser('~'), '.carousels')
+def _home():
+    if os.environ.get('CAROUSELS_HOME'): return os.environ['CAROUSELS_HOME']
+    try:                                               # written by the installer (custom or sandbox installs)
+        with open(os.path.join(HERE, 'paths.json'), encoding='utf-8') as f: return json.load(f)['home']
+    except Exception:
+        return os.path.join(os.path.expanduser('~'), '.carousels')
+
+
+HOME = _home()
 VENV = os.path.join(HOME, 'venv')
 MODELS = os.path.join(HOME, 'models')
+os.environ.setdefault('MPLCONFIGDIR', os.path.join(HOME, 'cache', 'matplotlib'))   # keep library caches inside HOME
 if os.path.isdir(os.path.join(HOME, 'browsers')):             # Chromium the installer downloaded (when there's no Chrome)
     os.environ.setdefault('PLAYWRIGHT_BROWSERS_PATH', os.path.join(HOME, 'browsers'))
 PHOTO_EXT = ('.jpg', '.jpeg', '.png', '.heic', '.heif', '.webp', '.tif', '.tiff')

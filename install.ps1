@@ -1,12 +1,15 @@
 # Carousels: a free Claude Code skill that turns your photos into Instagram carousels.
-# By @codecoffeechaos - https://cyberspell.tech/carousel-skill - GPL-3.0
+# By @codecoffeechaos - https://carousels.cyberspell.tech - GPL-3.0
 #
-# Install or update (Windows PowerShell):  irm https://cyberspell.tech/carousel-skill/install.ps1 | iex
+# Install or update (Windows PowerShell):  irm https://carousels.cyberspell.tech/install.ps1 | iex
 # Check:      powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\carousels\install.ps1" -Doctor
 # Uninstall:  powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\carousels\install.ps1" -Uninstall
 #
 # Without Terminal: unzip carousels-skill.zip, open the folder in the Claude app's Code tab and ask Claude to run
 # this installer. Run from an unzipped folder, it installs that folder's files instead of downloading them.
+# Test it in one folder, nothing installed outside it:
+#   $env:CAROUSELS_SANDBOX="$HOME\carousels-test"; irm https://carousels.cyberspell.tech/install.ps1 | iex
+#   then: cd ~\carousels-test; claude   (the skill only exists there)   remove: delete that folder
 # Stats: at the end it sends one anonymous count (installed, or the step that failed, plus OS) to Umami.
 # No personal data. Skip it with CAROUSELS_NO_STATS=1.
 #
@@ -17,9 +20,18 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$Base  = if ($env:CAROUSELS_BASE_URL) { $env:CAROUSELS_BASE_URL } else { 'https://cyberspell.tech/carousel-skill' }
+$Base  = if ($env:CAROUSELS_BASE_URL) { $env:CAROUSELS_BASE_URL } else { 'https://carousels.cyberspell.tech' }
 $CH    = if ($env:CAROUSELS_HOME) { $env:CAROUSELS_HOME } else { Join-Path $HOME '.carousels' }
-$Skill = Join-Path $HOME '.claude\skills\carousels'
+$Skill = if ($env:CAROUSELS_SKILL_DIR) { $env:CAROUSELS_SKILL_DIR } else { Join-Path $HOME '.claude\skills\carousels' }
+$Work  = if ($env:CAROUSELS_WORK) { $env:CAROUSELS_WORK } else { Join-Path $HOME 'Carousels' }
+$SB = $null
+if ($env:CAROUSELS_SANDBOX) {   # everything inside one folder: skill, tools, models, uv, work
+  New-Item -ItemType Directory -Force -Path $env:CAROUSELS_SANDBOX | Out-Null
+  $SB = (Resolve-Path $env:CAROUSELS_SANDBOX).Path
+  $CH = Join-Path $SB '.carousels'; $Skill = Join-Path $SB '.claude\skills\carousels'; $Work = Join-Path $SB 'Carousels'
+  $env:UV_CACHE_DIR = Join-Path $SB '.uv\cache'; $env:UV_PYTHON_INSTALL_DIR = Join-Path $SB '.uv\python'
+  $env:UV_INSTALL_DIR = Join-Path $SB '.uv\bin'; $env:UV_NO_MODIFY_PATH = '1'; $env:CAROUSELS_NO_STATS = '1'
+}
 $Py    = Join-Path $CH 'venv\Scripts\python.exe'
 $UmamiId = '18fcec8a-1398-4b38-9913-e45ec41863b8'                    # Umami website ID for the anonymous install count; empty = off
 $Src = $PSScriptRoot
@@ -39,7 +51,7 @@ function Warn($m) { Write-Host "  !  $m" -ForegroundColor Yellow }
 function Stat($name) {
   if (-not $UmamiId -or $env:CAROUSELS_NO_STATS) { return }
   try {
-    $body = @{ type = 'event'; payload = @{ website = $UmamiId; hostname = 'cyberspell.tech'; url = '/carousel-skill/install'; name = $name;
+    $body = @{ type = 'event'; payload = @{ website = $UmamiId; hostname = 'carousels.cyberspell.tech'; url = '/install'; name = $name;
       data = @{ os = 'windows'; arch = $env:PROCESSOR_ARCHITECTURE; mode = $Mode; step = $script:Step } } } | ConvertTo-Json -Depth 5
     Invoke-RestMethod -Method Post -Uri 'https://gateway.umami.is/api/send' -Body $body -ContentType 'application/json' `
       -UserAgent 'Mozilla/5.0 (Windows NT 10.0; carousels-installer)' -TimeoutSec 4 | Out-Null
@@ -59,7 +71,7 @@ if ($Uninstall) {
 }
 
 Write-Host ''
-Say 'Installing Carousels (a few minutes; about 2 GB on first install)'
+Say 'Installing Carousels (a few minutes; about 3 GB, up to 6 GB with an NVIDIA graphics card)'
 
 # 1. platform
 $script:Step = 'platform'
@@ -74,11 +86,12 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 
 # 2. uv (Python manager by Astral)
 $script:Step = 'uv'
-$env:Path = "$HOME\.local\bin;$env:Path"
+$UvBin = if ($env:UV_INSTALL_DIR) { $env:UV_INSTALL_DIR } else { "$HOME\.local\bin" }
+$env:Path = "$UvBin;$env:Path"
 if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
   Say 'Getting uv'
   powershell -ExecutionPolicy ByPass -NoProfile -c "irm https://astral.sh/uv/install.ps1 | iex" | Out-Null
-  $env:Path = "$HOME\.local\bin;$env:Path"
+  $env:Path = "$UvBin;$env:Path"
 }
 if (-not (Get-Command uv -ErrorAction SilentlyContinue)) { Fail 'Could not install uv. Check your internet connection and run the command again.' }
 Ok "uv $((uv --version).Split(' ')[1])"
@@ -176,8 +189,9 @@ try {
 }
 
 # 8. your work folder
-New-Item -ItemType Directory -Force -Path (Join-Path $HOME 'Carousels') | Out-Null
-Ok 'your carousels will live in Carousels in your home folder'
+New-Item -ItemType Directory -Force -Path $Work | Out-Null
+& $Py -c "import json,sys; json.dump({'home': sys.argv[1], 'work': sys.argv[2]}, open(sys.argv[3], 'w'), indent=1)" $CH $Work (Join-Path $Skill 'engine\paths.json')
+Ok "your carousels will live in $Work"
 
 # 9. check
 $script:Step = 'doctor'
@@ -188,5 +202,11 @@ $script:Step = 'done'; Stat 'install_ready'
 Write-Host ''
 Write-Host 'Done. Next: type  cd ~/Carousels  then  claude  and in Claude type  /carousels' -ForegroundColor Magenta
 Write-Host '(Or open the Code tab in the Claude app and choose the Carousels folder. Restart Claude Code if it was open.)'
+if ($SB) {
+  Write-Host ''
+  Write-Host "Test install: everything is inside $SB"
+  Write-Host "Try it:  cd $SB; claude   then type /carousels (the skill only exists in this folder)"
+  Write-Host "Remove:  delete the folder $SB"
+}
 Write-Host 'Posting your carousel? Tag @codecoffeechaos so I can see it.'
 Write-Host ''

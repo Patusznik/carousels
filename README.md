@@ -7,7 +7,7 @@
 A free, open-source skill for Claude Code by [@codecoffeechaos](https://www.instagram.com/codecoffeechaos/).
 Mac (recommended) or Windows.
 
-[Guide and live example](https://cyberspell.tech/carousel-skill/?utm_source=github&utm_medium=readme) ·
+[Guide and live example](https://carousels.cyberspell.tech/?utm_source=github&utm_medium=readme) ·
 [Install](#install-step-by-step) ·
 [Cheat sheet](CHEATSHEET.md)
 
@@ -40,12 +40,13 @@ order, plus a PDF. You change anything by saying it.
 <td><img src="docs/example-12.webp" width="200" alt="Slide 12: comment-keyword ending with a comment field"></td>
 </tr></table>
 
-All twelve slides, swipeable: [cyberspell.tech/carousel-skill](https://cyberspell.tech/carousel-skill/?utm_source=github&utm_medium=readme&utm_content=example)
+All twelve slides, swipeable: [carousels.cyberspell.tech](https://carousels.cyberspell.tech/?utm_source=github&utm_medium=readme&utm_content=example)
 
 ## Install, step by step
 
 You need a Mac with Apple Silicon (recommended) or a 64-bit Windows 10/11 PC, a Claude plan that includes Claude Code
-(Pro or Max, or a Team or Enterprise seat with it), and about 2 GB of free space.
+(Pro or Max, or a Team or Enterprise seat with it), and free space: about 2 GB on a Mac with Google Chrome, about 3 GB
+on a Mac without Chrome or on Windows, up to 6 GB on Windows with an NVIDIA graphics card.
 
 1. **Install Claude Code and sign in.** Follow the [official guide](https://code.claude.com/docs/en/overview). On
    Windows, also install [Git for Windows](https://git-scm.com/downloads/win).
@@ -56,11 +57,11 @@ You need a Mac with Apple Silicon (recommended) or a 64-bit Windows 10/11 PC, a 
 
    Mac:
    ```bash
-   curl -fsSL https://cyberspell.tech/carousel-skill/install.sh | bash
+   curl -fsSL https://carousels.cyberspell.tech/install.sh | bash
    ```
    Windows (PowerShell):
    ```powershell
-   irm https://cyberspell.tech/carousel-skill/install.ps1 | iex
+   irm https://carousels.cyberspell.tech/install.ps1 | iex
    ```
    Something missing? The installer tells you exactly what and how to fix it. Running it again is always safe.
 4. **Start Claude Code in your Carousels folder.** The installer made a `Carousels` folder in your home folder.
@@ -69,9 +70,26 @@ You need a Mac with Apple Silicon (recommended) or a 64-bit Windows 10/11 PC, a 
 5. **Type `/carousels`.** The brief starts. When Claude asks to run a command, allow it: that's the skill preparing
    your photos and rendering slides on your computer.
 
-**Rather not use Terminal?** Download this repo as a zip (green *Code* button → *Download ZIP*), unzip it, open the
-folder in the *Code* tab of the Claude desktop app and type: *Run the installer in this folder and tell me when it says
-READY.* Then go on to step 4. Details in [INSTALL.md](INSTALL.md).
+### Try it in a test folder first
+
+Everything goes into one folder and nothing is installed outside it:
+`curl -fsSL https://carousels.cyberspell.tech/install.sh | CAROUSELS_SANDBOX=~/carousels-test bash`, then
+`cd ~/carousels-test && claude` and `/carousels`. Delete the folder to remove it. Windows version in
+[INSTALL.md](INSTALL.md).
+
+### No Terminal? Let Claude install it
+
+You need the Claude desktop app, signed in, on a plan that includes Claude Code.
+
+1. Download the skill: [carousels-skill.zip](https://carousels.cyberspell.tech/carousels-skill.zip) (or the green
+   *Code* button on this page → *Download ZIP*).
+2. Unzip it: double-click it on a Mac, or right-click it and choose *Extract All* on Windows.
+3. Open the Claude desktop app, go to the *Code* tab and choose the unzipped folder.
+4. Type: *Run the installer in this folder and tell me when it says READY.* Allow the commands Claude asks to run.
+   It takes a few minutes.
+5. When it says READY, start a new session in the *Code* tab and choose the *Carousels* folder in your home folder
+   (the installer made it).
+6. Type `/carousels`. The brief starts.
 
 ## The folder system
 

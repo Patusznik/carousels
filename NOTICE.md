@@ -1,6 +1,6 @@
 # Notice
 
-**Carousels** by @codecoffeechaos (CyberSpell Software) · https://cyberspell.tech/carousel-skill
+**Carousels** by @codecoffeechaos (CyberSpell Software) · https://carousels.cyberspell.tech
 Copyright (C) 2026 CyberSpell Software (@codecoffeechaos).
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
